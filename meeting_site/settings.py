@@ -139,3 +139,9 @@ WATERMARK_PATH = os.path.join(BASE_DIR, 'static/watermark.jpg')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'date.User'
+
+EMAIL_HOST_USER = os.environ.get('ADMIN_EMAIL')
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('ADMIN_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

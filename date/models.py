@@ -32,8 +32,22 @@ class User(AbstractUser):
             avatar.save(self.avatar.path)
 
     def __str__(self):
-        return f'{self.email} - {self.first_name} {self.last_name}'
+        return f'{self.first_name} {self.last_name}'
 
     class Meta:
         verbose_name = 'Участник'
         verbose_name_plural = 'Участники'
+
+
+class Sympathy(models.Model):
+    who = models.ForeignKey(User, on_delete=models.CASCADE, related_name='who')
+    whom = models.ForeignKey(User, verbose_name='Кого хотите оценить?', on_delete=models.CASCADE, related_name='whom')
+    matching = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.who} оценил {self.whom}'
+
+    class Meta:
+        verbose_name = 'Взаимная симпатия'
+        verbose_name_plural = 'Взаимные симпатии'
+        constraints = [models.UniqueConstraint(fields=('who', 'whom'), name='unique_matching')]

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Sympathy
 
 
 class CreationSerializer(serializers.ModelSerializer):
@@ -13,10 +13,17 @@ class CreationSerializer(serializers.ModelSerializer):
         user = User(email=validated_data['email'],
                     first_name=validated_data['first_name'],
                     last_name=validated_data['last_name'],
-                    username='',
                     avatar=validated_data['avatar'],
                     gender=validated_data['gender'])
         user.set_password(validated_data['password'])
         user.save()
 
         return user
+
+
+class SympathySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Sympathy
+        extra_kwargs = {'who': {'read_only': True}, 'matching': {'read_only': True}}
+        fields = ('who', 'whom', 'matching')
