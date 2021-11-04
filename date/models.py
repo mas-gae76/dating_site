@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from .utils import *
 from PIL import Image
 from django.conf import settings
+from django_filters import rest_framework as filters
 
 
 class User(AbstractUser):
@@ -51,3 +52,13 @@ class Sympathy(models.Model):
         verbose_name = 'Взаимная симпатия'
         verbose_name_plural = 'Взаимные симпатии'
         constraints = [models.UniqueConstraint(fields=('who', 'whom'), name='unique_matching')]
+
+
+class UserFilter(filters.FilterSet):
+    first_name = filters.CharFilter(label='Имя', lookup_expr='icontains')
+    last_name = filters.CharFilter(label='Фамилия', lookup_expr='icontains')
+    gender = filters.CharFilter(label='Пол', lookup_expr='icontains')
+
+    class Meta:
+        models = User
+        fields = ('first_name', 'last_name', 'gender')

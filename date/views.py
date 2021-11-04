@@ -1,11 +1,13 @@
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
-from .serializers import CreationSerializer, SympathySerializer, User, Sympathy
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, ListAPIView
+from .serializers import CreationSerializer, SympathySerializer
+from .models import User, Sympathy, UserFilter
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django_filters import rest_framework as filters
 
 
 class RegisterView(CreateAPIView):
@@ -34,7 +36,8 @@ class MatchingView(RetrieveUpdateAPIView):
         except IntegrityError:
             return Response({'Ошибка': 'Вы уже оценивали этого пользователя'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
-            return Response({'Ошибка': 'Возникли проблемы неа стороне сервера'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'Ошибка': 'Возникли проблемы на стороне сервера'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @staticmethod
     def check_sympathy(cur_user, match_user):
@@ -55,3 +58,10 @@ class MatchingView(RetrieveUpdateAPIView):
         admin_email = settings.EMAIL_HOST_USER
         user_email = [user1.email]
         return send_mail(subject, message, admin_email, user_email)
+
+
+class UserListView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = CreationSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = UserFilter
