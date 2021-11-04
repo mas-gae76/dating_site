@@ -18,6 +18,8 @@ class User(AbstractUser):
     last_name = models.CharField(verbose_name='Фамилия', max_length=50)
     email = models.EmailField(max_length=128, unique=True)
     username = models.CharField(blank=True, max_length=10)
+    latitude = models.DecimalField(verbose_name='Широта', max_digits=6, decimal_places=2)
+    longitude = models.DecimalField(verbose_name='Долгота', max_digits=6, decimal_places=2)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -58,7 +60,8 @@ class UserFilter(filters.FilterSet):
     first_name = filters.CharFilter(label='Имя', lookup_expr='icontains')
     last_name = filters.CharFilter(label='Фамилия', lookup_expr='icontains')
     gender = filters.CharFilter(label='Пол', lookup_expr='icontains')
+    distance = filters.NumberFilter(label='Дистанция')
 
     class Meta:
         models = User
-        fields = ('first_name', 'last_name', 'gender')
+        fields = ('first_name', 'last_name', 'gender', 'distance')
