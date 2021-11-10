@@ -10,7 +10,7 @@ from django.conf import settings
 class CitilinkParser:
 
     def __init__(self):
-        self.url = 'https://www.citilink.ru/catalog/merch-dlya-geimerov'
+        self.url = 'https://www.citilink.ru/catalog/televizory'
 
     def parse(self):
         r = requests.get(self.url)
@@ -56,7 +56,7 @@ class CitilinkParser:
             os.mkdir(folder + subdir)
             for path in paths:
                 filename = path.split('/')[-1]
-                img_data = requests.get(path, verify=False).content
+                img_data = requests.get(path, verify=True).content
                 with open(folder + subdir + '/' + filename, 'wb') as handler:
                     handler.write(img_data)
                 print(filename + ' загружено')
