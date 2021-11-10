@@ -8,7 +8,8 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django_filters import rest_framework as filters
-from math import *
+from django.db.models.functions import *
+from django.db.models import F
 
 
 class RegisterView(CreateAPIView):
@@ -64,35 +65,38 @@ class MatchingView(RetrieveUpdateAPIView):
 class DistanceFilter(filters.DjangoFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
-        selected_users = queryset
-        new_queryset = []
+        selected_users = User.objects.exclude(id=request.user.id)
         distance = request.GET.get('distance')
         first_name = request.GET.get('first_name')
         last_name = request.GET.get('last_name')
         gender = request.GET.get('gender')
         if first_name or last_name or gender:
-            selected_users = User.objects.filter(first_name__icontains=first_name, last_name__icontains=last_name, gender__icontains=gender)
+            selected_users = selected_users.filter(first_name__icontains=first_name, last_name__icontains=last_name,
+                                                   gender__icontains=gender)
         if distance:
-            for user in selected_users:
-                cur_user_longitude = request.user.longitude
-                cur_user_latitude = request.user.latitude
-                user_longitude = user.longitude
-                user_latitude = user.latitude
-                cur_distance = self.calculate_distance(cur_user_longitude, cur_user_latitude, user_longitude, user_latitude)
-                if cur_distance <= int(distance) and cur_distance != 0:
-                    new_queryset.append(user)
-            return new_queryset
+            radius = 6371
+            cur_user_longitude = Radians(request.user.longitude)
+            cur_user_latitude = Radians(request.user.latitude)
+            selected_users = selected_users.annotate(
+                distance=radius * ACos(
+                    Sin(Radians(F('latitude')))
+                    *
+                    Sin(cur_user_latitude)
+                    +
+                    Cos(Radians(F('latitude')))
+                    *
+                    Cos(cur_user_latitude)
+                    *
+                    Cos(cur_user_longitude -
+                        Radians(F('longitude'))
+                        )
+                )
+            ).order_by('distance').filter(distance__lte=distance)
         return selected_users
-
-    @staticmethod
-    def calculate_distance(lon1: float, lat1: float, lon2: float, lat2: float) -> int:
-        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-        distance = 6371 * (acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon1 - lon2)))
-        return int(distance)
 
 
 class UserListView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = CreationSerializer
-    filter_backends = (DistanceFilter, )
+    filter_backends = (DistanceFilter,)
     filterset_class = UserFilter
