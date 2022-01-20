@@ -2,6 +2,7 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, ListAP
 from .serializers import CreationSerializer, SympathySerializer
 from .models import User, Sympathy, UserFilter
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
@@ -14,6 +15,7 @@ from django.db.models import F
 
 class RegisterView(CreateAPIView):
     serializer_class = CreationSerializer
+    permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
         serializer.save()
