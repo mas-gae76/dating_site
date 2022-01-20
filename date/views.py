@@ -91,7 +91,7 @@ class DistanceFilter(filters.DjangoFilterBackend):
                         Radians(F('longitude'))
                         )
                 )
-            ).order_by('distance').filter(distance__lte=distance)
+            ).filter(distance__lte=distance).order_by('distance')
         return selected_users
 
 
