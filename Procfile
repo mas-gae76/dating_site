@@ -1,1 +1,1 @@
-web:gunicorn --bind 127.0.0.1:8000 dating_site.wsgi --log-file
+web: gunicorn meeting_site.wsgi --log-file
