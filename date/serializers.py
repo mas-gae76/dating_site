@@ -14,7 +14,9 @@ class CreationSerializer(serializers.ModelSerializer):
                     first_name=validated_data['first_name'],
                     last_name=validated_data['last_name'],
                     avatar=validated_data['avatar'],
-                    gender=validated_data['gender'])
+                    gender=validated_data['gender'],
+                    longitude=validated_data['longitude'],
+                    latitude=validated_data['latitude'])
         user.set_password(validated_data['password'])
         user.save()
 
