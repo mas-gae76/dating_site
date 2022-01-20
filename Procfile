@@ -1,2 +1,1 @@
-web:gunicorn dating_site.wsgi --log-file
-heroku ps:scale web=1
+web:gunicorn --bind 127.0.0.1:8000 dating_site.wsgi --log-file
