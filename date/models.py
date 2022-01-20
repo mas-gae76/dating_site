@@ -17,7 +17,7 @@ class User(AbstractUser):
     first_name = models.CharField(verbose_name='Имя', max_length=40)
     last_name = models.CharField(verbose_name='Фамилия', max_length=50)
     email = models.EmailField(max_length=128, unique=True)
-    username = models.CharField(blank=True, max_length=10)
+    username = models.CharField(blank=True, max_length=10, null=True)
     latitude = models.DecimalField(verbose_name='Широта', max_digits=6, decimal_places=2)
     longitude = models.DecimalField(verbose_name='Долгота', max_digits=6, decimal_places=2)
     USERNAME_FIELD = 'email'
