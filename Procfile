@@ -1,1 +1,1 @@
-web: gunicorn meeting_site.wsgi:date --log-file -
+web: gunicorn meeting_site.wsgi --log-file -
