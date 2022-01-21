@@ -17,9 +17,6 @@ class RegisterView(CreateAPIView):
     serializer_class = CreationSerializer
     permission_classes = [AllowAny]
 
-    def perform_create(self, serializer):
-        serializer.save()
-
 
 class MatchingView(RetrieveUpdateAPIView):
     serializer_class = SympathySerializer
